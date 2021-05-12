@@ -1,22 +1,20 @@
-import React, { createContext, useState } from 'react';
-import {v1} from 'uuid';
+import React, { createContext, useReducer, useEffect } from 'react';
+import {recommendationReducer} from '../Reducers/RecommendationReducers'
 
 export const RecommendedContext = createContext();
 
 const RecommendedContextProvider = (props) => {
-  const [recommendations, setRecommendations] = useState([
-    {title: 'Ted Lasso', recommendedBy: 'Jason Sudeikis', source: 'Apple Tv', id: 1},
-    {title: 'The Morning Show', recommendedBy: 'Jennifer Aniston', source: 'Apple Tv', id: 2},
-  ]);
-  const addRecommendation = (title, recommendedBy, source) => {
-    setRecommendations([...recommendations, {title, recommendedBy, source, id: v1()}]);
-  };
-  const removeRecommendation = (id) => {
-    setRecommendations(recommendations.filter(recommendation => recommendation.id !== id));
-  }
+  const [recommendations, dispatch] = useReducer(recommendationReducer, [],() => {
+    const localData = localStorage.getItem('recommendations');
+    return localData ? JSON.parse(localData) : [];
+  } );
+  
+  useEffect(()=>{
+    localStorage.setItem('recommendations', JSON.stringify(recommendations))
+  }, [recommendations])
 
   return (
-    <RecommendedContext.Provider value={{ recommendations, addRecommendation, removeRecommendation }}>
+    <RecommendedContext.Provider value={{ recommendations, dispatch }}>
       {props.children}
     </RecommendedContext.Provider>
   );

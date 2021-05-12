@@ -2,14 +2,16 @@ import React, {useContext, useState} from 'react';
 import {RecommendedContext} from '../context/RecommendedContext'
 
 const NewRecommendationForm = () => {
-    const { addRecommendation} = useContext(RecommendedContext);
+    const { dispatch} = useContext(RecommendedContext);
     const [title, setTitle] = useState('');
     const [recommendedBy, setRecommendedBy] = useState('');
     const [source, setSource] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        addRecommendation(title, recommendedBy,source);
+        dispatch({type: 'ADD_RECOMMENDATION', recommendation: {
+            title, recommendedBy, source
+        }});
         setTitle('');
         setRecommendedBy('');
         setSource('');
